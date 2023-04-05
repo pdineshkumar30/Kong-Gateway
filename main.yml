@@ -1,0 +1,43 @@
+---
+- name: Install build dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - git
+    - curl
+    - libpcre3-dev
+    - libssl-dev
+    - gcc
+    - make
+    - unzip
+
+- name: Clone Kong source code
+  git:
+    repo: https://github.com/pdineshkumar30/Kong-Gateway.git
+    dest: /opt/kong
+    version: 2.8.x
+
+- name: Build Kong from source
+  shell: |
+    cd /opt/kong
+    make install
+
+- name: Create Kong startup script
+  copy:
+    src: kong.service
+    dest: /etc/systemd/system/kong.service
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+
+- name: Enable Kong at boot
+  systemd:
+    name: kong
+    enabled: yes
+
+- name: Start Kong
+  systemd:
+    name: kong
+    state: started
