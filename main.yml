@@ -1,5 +1,5 @@
 ---
-- name: Install build dependencies
+- name: Install dependencies
   apt:
     name: "{{ item }}"
     state: present
@@ -16,14 +16,14 @@
   git:
     repo: https://github.com/pdineshkumar30/Kong-Gateway.git
     dest: /opt/kong
-    version: 2.8.x
+    version: 2.8
 
 - name: Build Kong from source
   shell: |
     cd /opt/kong
     make install
 
-- name: Create Kong startup script
+- name: Create startup script
   copy:
     src: kong.service
     dest: /etc/systemd/system/kong.service
